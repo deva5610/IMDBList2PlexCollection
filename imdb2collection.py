@@ -183,7 +183,7 @@ if __name__ == "__main__":
     print("\nList of movies missing that are in selected IMDB list:\n")
     
     for idx, (imdb_id, title, year) in missing_imdb_movies:
-        print("{idx}\t{imdb_id}\t{title} {year}".format(idx=idx+1, imdb_id=imdb_id, title=title.encode('UTF-8'), year=year))
+        print("{idx}\t{imdb_id}\t{title} {year}".format(idx=idx+1, imdb_id=imdb_id.encode('UTF-8'), title=title.encode('UTF-8'), year=year.encode('UTF-8')))
     
     print("\n===================================================================")
     print("                               Done!                               ")
