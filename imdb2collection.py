@@ -129,9 +129,9 @@ def run_imdb_sync():
     print("Retrieving movies from selected IMDB list.")
     r = requests.get(IMDB_URL, headers={'Accept-Language': library_language})
     tree = html.fromstring(r.content)
-    title_name = tree.xpath("//div[contains(@class, 'lister-item-content')]//h3[contains(@class, 'lister-item-header')]//a/text()")
-    title_years = tree.xpath("//div[contains(@class, 'lister-item-content')]//h3[contains(@class, 'lister-item-header')]//span[contains(@class, 'lister-item-year')]/text()")
-    title_ids = tree.xpath("//div[contains(@class, 'lister-item-content')]//div[contains(@class, 'ipl-rating-interactive')]/input//@data-tconst")
+    title_name = tree.xpath("//div[contains(@class, 'lister-col-wrapper')]//span[contains(@class, 'lister-item-header')]//a/text()")
+    title_years = tree.xpath("//div[contains(@class, 'lister-col-wrapper')]//span[contains(@class, 'lister-item-header')]//span[contains(@class, 'lister-item-year')]/text()")
+    title_ids = tree.xpath("//div[contains(@class, 'lister-col-wrapper')]//div[contains(@class, 'ipl-rating-interactive')]/input//@data-tconst")
 
     # Create a dictionary of {imdb_id: movie}
     imdb_map = {}
@@ -183,7 +183,7 @@ if __name__ == "__main__":
     print("\nList of movies missing that are in selected IMDB list:\n")
     
     for idx, (imdb_id, title, year) in missing_imdb_movies:
-        print("{idx}\t{imdb_id}\t{title} {year}".format(idx=idx+1, imdb_id=imdb_id, title=title.encode('UTF-8'), year=year))
+        print("{idx}\t{imdb_id}\t{title} {year}".format(idx=idx+1, imdb_id=imdb_id.encode('UTF-8'), title=title.encode('UTF-8'), year=year.encode('UTF-8')))
     
     print("\n===================================================================")
     print("                               Done!                               ")
