@@ -36,6 +36,8 @@ Run the script with "python imdb2collection.py" and follow the instructions. You
 use to match (eg - https://www.imdb.com/list/ls064646512/) and to decide what you want the matching movies to be tagged as
 (eg - Pixar, Pixar Movies, Pixar Animations, etc - all 3 are valid entries when asked).
 
+**Note - You must set the IMDB page you want copied to the 'Compact View' mode before copying the URL. Failing to do this will result in 0 movies being seen. This change means that pages generated from the powerful [IMDB search](https://www.imdb.com/search/title/) can also be scraped and not just specific list pages.**
+
 That's it. The script should (hopefully!) run, it'll match movies from the IMDB list to your Movies Library and tag them into the
 collection you specified.
 
