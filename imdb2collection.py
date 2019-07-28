@@ -49,8 +49,8 @@ print("\n")
 
 ###IMDB List Details###
 
-IMDB_URL = input("IMDB List URL (eg - https://www.imdb.com/list/ls002400902/): ")
-IMDB_COLLECTION_NAME = input("Collection Name (eg - Disney Classics): ")
+IMDB_URL = raw_input("IMDB List URL (eg - https://www.imdb.com/list/ls002400902/): ")
+IMDB_COLLECTION_NAME = raw_input("Collection Name (eg - Disney Classics): ")
 
 TMDB_REQUEST_COUNT = 0  # DO NOT CHANGE
 
