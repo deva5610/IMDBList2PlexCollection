@@ -38,7 +38,7 @@ TMDB_API_KEY = ''
 ##### CODE BELOW - DON'T EDIT BELOW HERE#####
 #############################################
 if hasattr(__builtins__, 'raw_input'):
-input=raw_input
+ input=raw_input
 
 ### Header ###
 
