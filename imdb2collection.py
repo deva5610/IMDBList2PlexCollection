@@ -37,6 +37,8 @@ TMDB_API_KEY = ''
 #############################################
 ##### CODE BELOW - DON'T EDIT BELOW HERE#####
 #############################################
+
+#Hacky solution for Python 2.x & 3.x compatibility
 if hasattr(__builtins__, 'raw_input'):
  input=raw_input
 
