@@ -32,11 +32,10 @@ Use pip to install the few listed requirements.
 
 pip install -r requirements.txt
 
-Run the script with "python imdb2collection.py" and follow the instructions. You'll want two things. A URL to the IMDB list you want to
-use to match (eg - https://www.imdb.com/list/ls064646512/) and to decide what you want the matching movies to be tagged as
+Run the script with "python imdb2collection.py" and follow the instructions. You'll want two things. A URL to the IMDB list you want to match, set to "Compact View" (eg - https://www.imdb.com/list/ls064646512/?sort=list_order,asc&st_dt=&mode=simple&page=1&ref_=ttls_vw_smp) and to decide what you want the matching movies to be tagged as
 (eg - Pixar, Pixar Movies, Pixar Animations, etc - all 3 are valid entries when asked).
 
-**Note - You must set the IMDB page you want copied to the 'Compact View' mode before copying the URL. Failing to do this will result in 0 movies being seen. This change means that pages generated from the powerful [IMDB search](https://www.imdb.com/search/title/) can also be scraped and not just specific list pages.**
+***Note - You must set the IMDB page you want copied to the 'Compact View' mode before copying the URL. Failing to do this will result in 0 movies being seen. This change means that pages generated from the powerful [IMDB search](https://www.imdb.com/search/title/) can also be scraped and not just specific list pages.***
 
 That's it. The script should (hopefully!) run, it'll match movies from the IMDB list to your Movies Library and tag them into the
 collection you specified.
