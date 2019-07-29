@@ -19,20 +19,6 @@ from plexapi.server import PlexServer
 #
 #------------------------------------------------------------------------------
 
-#############################
-### EDIT THE BELOW VALUES ###
-#############################
-
-### Plex server details ###
-
-PLEX_URL = 'http://<plex-server>:32400' 		#Plex URL without trailing slash.
-PLEX_TOKEN = '<plex-token>'
-MOVIE_LIBRARIES = ['Movies']			#Enter Plex movie libraries, multiple allowed like ['Movies2', 'Test Movies'].
-
-### TMBD API Key if using "The Movie Database" agent ###
-
-TMDB_API_KEY = ''
-
 #############################################
 ##### CODE BELOW - DON'T EDIT BELOW HERE#####
 #############################################
@@ -49,6 +35,26 @@ print(" Created by modifiying the excellent  ")
 print(" Automated IMDB Top 250 Plex collection script by /u/SwiftPanda16  ")
 print("===================================================================")
 print("\n")
+
+### Read Config File ###
+
+try:
+    # >3.2
+    from configparser import ConfigParser
+except ImportError:
+    # python27
+    # Refer to the older SafeConfigParser as ConfigParser
+    from ConfigParser import SafeConfigParser as ConfigParser
+
+parser = ConfigParser()
+
+# get the path to config.ini
+config_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'config.ini')
+parser.read(config_path)
+PLEX_URL = parser.get('plex', 'url')
+PLEX_TOKEN = parser.get('plex', 'token')
+MOVIE_LIBRARIES = {parser.get('plex', 'library')}
+TMDB_API_KEY = parser.get('tmdb', 'apikey')
 
 ###IMDB List Details###
 

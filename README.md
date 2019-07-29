@@ -12,25 +12,27 @@ decide to mess with your Plex server. Maybe spin up a small test library before 
 about my lack of ability!
 
 # Installation
-Edit imdb2collection.py with your favourite text editor. **ONLY _PLEX_URL_, _PLEX_TOKEN_ and _MOVIE_LIBRARIES_ need to be set for the script to work**.
+Create or edit config.ini with your favourite text editor. Keep config.ini in the same working directory as the script. 
 
-**PLEX_URL** cannot end with a trailing slash - http://localhost:32400 & https://plex.woofwoof.wahoo are both fine,
-https://plex.woofwoof.wahoo/ is not.
+**ONLY _"url="_, _"token="_ and _"library="_ underneath the [plex] header need to be set for the script to work**.
 
-**PLEX_TOKEN** can be found using [this guide.](https://support.plex.tv/articles/204059436-finding-an-authentication-token-x-plex-token/)
-A token can also be found in Tautulli or Ombi if you're using them.
+**url=** cannot end with a trailing slash - _**url=http://localhost:32400**_ & _**url=https://plex.woofwoof.wahoo**_ are both 
+examples of proper formatting, _**url=https://plex.woofwoof.wahoo/**_ is not.
 
-**MOVIE_LIBRARIES** is pretty self explanatory. ['My Movies 1'], ['My Movies 1', 'My Movies 2'] are both valid examples.
+**token=** can be found using [this guide.](https://support.plex.tv/articles/204059436-finding-an-authentication-token-x-plex-token/)
+A token can also be found in Tautulli or Ombi if you're using them. _**token=njkjdkHJJKAJKnjSAKJ**_ is an example of correct formatting.
 
-They are the three variables most people will have to fill in. **_If you're using_** 'The Movie Database' agent instead of Plex Movie
-you'll also need to edit the TMDB_API_KEY variable.
+**library=** is pretty self explanatory. Only 1 Library is supported at a time. _**library=Movies**_ is an example of corect formatting.
 
-**That's all. Nothing else needs to be, or should be edited.**
+They are the three variables most people will have to fill in.
+
+**_If, and only IF you're using_** 'The Movie Database' agent instead of Plex Movie you'll also need to edit the _**apikey=**_ variable
+located under the [tmdb] header.
 
 # Usage
-Use pip to install the few listed requirements.
+If you are not using a standalone binary you'll need to install dependencies. Use pip to install the few listed requirements.
 
-pip install -r requirements.txt
+pip install -r requirements.txt **_OR_** "pip install lxml" "pip install plexapi" "pip install requests" in turn.
 
 Run the script with "python imdb2collection.py" and follow the instructions. You'll want two things. A URL to the IMDB list you want to match (eg - https://www.imdb.com/list/ls064646512/) and to decide what you want the matching movies to be tagged as
 (eg - Pixar, Pixar Movies, Pixar Animations, etc - all 3 are valid entries when asked).
