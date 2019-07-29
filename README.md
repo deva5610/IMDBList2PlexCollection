@@ -13,18 +13,18 @@ about my lack of ability!
 
 # Installation
 Create or edit config.ini with your favourite text editor. Keep config.ini in the same working directory as the script.
-**ONLY _url=_, _token=_ and _library=_ underneath the [plex] header need to be set for the script to work**.
+**ONLY _"url="_, _"token="_ and _"library="_ underneath the [plex] header need to be set for the script to work**.
 
-**url** cannot end with a trailing slash - _url=http://localhost:32400_ & _url=https://plex.woofwoof.wahoo_ are both fine,
-_url=https://plex.woofwoof.wahoo/_ is not.
+**url=** cannot end with a trailing slash - _**url=http://localhost:32400**_ & _**url=https://plex.woofwoof.wahoo**_ are both 
+examples of proper formatting, _**url=https://plex.woofwoof.wahoo/**_ is not.
 
-**token** can be found using [this guide.](https://support.plex.tv/articles/204059436-finding-an-authentication-token-x-plex-token/)
-A token can also be found in Tautulli or Ombi if you're using them. _token=njkjdkHJJKAJKnjSAKJ_ is an example of correct formatting.
+**token=** can be found using [this guide.](https://support.plex.tv/articles/204059436-finding-an-authentication-token-x-plex-token/)
+A token can also be found in Tautulli or Ombi if you're using them. _**token=njkjdkHJJKAJKnjSAKJ**_ is an example of correct formatting.
 
-**library** is pretty self explanatory. Only 1 Library is supported at a time. _library=Movies_ is an example of corect formatting.
+**library=** is pretty self explanatory. Only 1 Library is supported at a time. _**library=Movies**_ is an example of corect formatting.
 
 They are the three variables most people will have to fill in. **_If you're using_** 'The Movie Database' agent instead of Plex Movie
-you'll also need to edit the _apikey_ variable located under [tmdb].
+you'll also need to edit the _**apikey=**_ variable located under the [tmdb] header.
 
 # Usage
 If not using a standalone binary you need to install dependencies. Use pip to install the few listed requirements.
