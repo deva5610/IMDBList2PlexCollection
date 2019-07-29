@@ -12,20 +12,20 @@ decide to mess with your Plex server. Maybe spin up a small test library before 
 about my lack of ability!
 
 # Installation
-Edit imdb2collection.py with your favourite text editor. PLEX_URL, PLEX_TOKEN and MOVIE_LIBRARIES need to be set.
+Edit imdb2collection.py with your favourite text editor. **ONLY _PLEX_URL_, _PLEX_TOKEN_ and _MOVIE_LIBRARIES_ need to be set for the script to work**.
 
-PLEX_URL cannot end with a trailing slash - http://localhost:32400 & https://plex.woofwoof.wahoo are both fine,
+**PLEX_URL** cannot end with a trailing slash - http://localhost:32400 & https://plex.woofwoof.wahoo are both fine,
 https://plex.woofwoof.wahoo/ is not.
 
-PLEX_TOKEN can be found using [this guide.](https://support.plex.tv/articles/204059436-finding-an-authentication-token-x-plex-token/)
+**PLEX_TOKEN** can be found using [this guide.](https://support.plex.tv/articles/204059436-finding-an-authentication-token-x-plex-token/)
 A token can also be found in Tautulli or Ombi if you're using them.
 
-MOVIE_LIBRARIES is pretty self explanatory. ['My Movies 1'], ['My Movies 1', 'My Movies 2'] are both valid examples.
+**MOVIE_LIBRARIES** is pretty self explanatory. ['My Movies 1'], ['My Movies 1', 'My Movies 2'] are both valid examples.
 
-They are the three variables most people will have to fill in. If you're using 'The Movie Database' agent instead of Plex Movie you'll
-also need to edit the TMDB_API_KEY variable.
+They are the three variables most people will have to fill in. **_If you're using_** 'The Movie Database' agent instead of Plex Movie
+you'll also need to edit the TMDB_API_KEY variable.
 
-That's all. Nothing else needs to be edited.
+**That's all. Nothing else needs to be, or should be edited.**
 
 # Usage
 Use pip to install the few listed requirements.
