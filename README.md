@@ -28,9 +28,9 @@ They are the three variables most people will have to fill in. **_If you're usin
 you'll also need to edit the _**apikey=**_ variable located under the [tmdb] header.
 
 # Usage
-If not using a standalone binary you need to install dependencies. Use pip to install the few listed requirements.
+If you are not using a standalone binary you'll need to install dependencies. Use pip to install the few listed requirements.
 
-pip install -r requirements.txt
+pip install -r requirements.txt **_OR_** "pip install lxml" "pip install plexapi" "pip install requests" in turn.
 
 Run the script with "python imdb2collection.py" and follow the instructions. You'll want two things. A URL to the IMDB list you want to match (eg - https://www.imdb.com/list/ls064646512/) and to decide what you want the matching movies to be tagged as
 (eg - Pixar, Pixar Movies, Pixar Animations, etc - all 3 are valid entries when asked).
