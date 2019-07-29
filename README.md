@@ -24,8 +24,10 @@ A token can also be found in Tautulli or Ombi if you're using them. _**token=njk
 
 **library=** is pretty self explanatory. Only 1 Library is supported at a time. _**library=Movies**_ is an example of corect formatting.
 
-They are the three variables most people will have to fill in. **_If you're using_** 'The Movie Database' agent instead of Plex Movie
-you'll also need to edit the _**apikey=**_ variable located under the [tmdb] header.
+They are the three variables most people will have to fill in.
+
+**_If, and only IF you're using_** 'The Movie Database' agent instead of Plex Movie you'll also need to edit the _**apikey=**_ variable
+located under the [tmdb] header.
 
 # Usage
 If you are not using a standalone binary you'll need to install dependencies. Use pip to install the few listed requirements.
