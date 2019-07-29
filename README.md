@@ -12,7 +12,8 @@ decide to mess with your Plex server. Maybe spin up a small test library before 
 about my lack of ability!
 
 # Installation
-Create or edit config.ini with your favourite text editor. Keep config.ini in the same working directory as the script.
+Create or edit config.ini with your favourite text editor. Keep config.ini in the same working directory as the script. 
+
 **ONLY _"url="_, _"token="_ and _"library="_ underneath the [plex] header need to be set for the script to work**.
 
 **url=** cannot end with a trailing slash - _**url=http://localhost:32400**_ & _**url=https://plex.woofwoof.wahoo**_ are both 
