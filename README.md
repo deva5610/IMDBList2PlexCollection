@@ -35,7 +35,7 @@ pip install -r requirements.txt
 Run the script with "python imdb2collection.py" and follow the instructions. You'll want two things. A URL to the IMDB list you want to match (eg - https://www.imdb.com/list/ls064646512/) and to decide what you want the matching movies to be tagged as
 (eg - Pixar, Pixar Movies, Pixar Animations, etc - all 3 are valid entries when asked).
 
-***Note - IMDB Lists are supported in their default 'detailed' view, as are the result pages from the powerful [IMDB search engine](https://www.imdb.com/search/title/)***
+***Note - IMDB Lists are supported in their default 'detailed' view, as are the result pages from the powerful [IMDB search engine.](https://www.imdb.com/search/title/)***
 
 That's it. The script should (hopefully!) run, it'll match movies from the IMDB list to your Movies Library and tag them into the
 collection you specified.
