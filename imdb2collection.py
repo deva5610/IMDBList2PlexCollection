@@ -25,10 +25,9 @@ from plexapi.server import PlexServer
 
 ### Plex server details ###
 
-PLEX_URL = 'https://plex.blah' 		#Plex URL without trailing slash.
-PLEX_TOKEN = ''
-MOVIE_LIBRARIES = ['Test']			#Enter Plex movie libraries, multiple allowed like ['Movies2', 'Test Movies'].
-
+PLEX_URL = 'http://<plex-server>:32400' 		#Plex URL without trailing slash.
+PLEX_TOKEN = '<plex-token>'
+MOVIE_LIBRARIES = ['Movies']			#Enter Plex movie libraries, multiple allowed like ['Movies2', 'Test Movies'].
 
 ### TMBD API Key if using "The Movie Database" agent ###
 
@@ -131,9 +130,9 @@ def run_imdb_sync():
     print("Retrieving movies from selected IMDB list.")
     r = requests.get(IMDB_URL, headers={'Accept-Language': library_language})
     tree = html.fromstring(r.content)
-    title_name = tree.xpath("//div[contains(@class, 'lister-col-wrapper')]//span[contains(@class, 'lister-item-header')]//a/text()")
-    title_years = tree.xpath("//div[contains(@class, 'lister-col-wrapper')]//span[contains(@class, 'lister-item-header')]//span[contains(@class, 'lister-item-year')]/text()")
-    title_ids = tree.xpath("//div[contains(@class, 'lister-col-wrapper')]//div[contains(@class, 'ipl-rating-interactive')]/input//@data-tconst")
+    title_name = tree.xpath("//div[contains(@class, 'lister-item-content')]//span[contains(@class, 'lister-item-header')]//a/text()")
+    title_years = tree.xpath("//div[contains(@class, 'lister-item-content')]//span[contains(@class, 'lister-item-header')]//span[contains(@class, 'lister-item-year')]/text()")
+    title_ids = tree.xpath("//div[contains(@class, 'lister-item-content')]//div[contains(@class, 'ipl-rating-interactive')]/input//@data-tconst")
 
     # Create a dictionary of {imdb_id: movie}
     imdb_map = {}
