@@ -132,7 +132,7 @@ def run_imdb_sync():
     tree = html.fromstring(r.content)
     title_name = tree.xpath("//div[contains(@class, 'lister-item-content')]//h3[contains(@class, 'lister-item-header')]//a/text()")
     title_years = tree.xpath("//div[contains(@class, 'lister-item-content')]//h3[contains(@class, 'lister-item-header')]//span[contains(@class, 'lister-item-year')]/text()")
-    title_ids = tree.xpath("//div[contains(@class, 'lister-item-content')]//div[contains(@class, 'ipl-rating-interactive')]/input//@data-tconst")
+    title_ids = tree.xpath("//div[contains(@class, 'lister-item-image')]//a/img//@data-tconst")
 
     # Create a dictionary of {imdb_id: movie}
     imdb_map = {}
