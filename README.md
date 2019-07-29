@@ -12,23 +12,22 @@ decide to mess with your Plex server. Maybe spin up a small test library before 
 about my lack of ability!
 
 # Installation
-Edit imdb2collection.py with your favourite text editor. **ONLY _PLEX_URL_, _PLEX_TOKEN_ and _MOVIE_LIBRARIES_ need to be set for the script to work**.
+Create or edit config.ini with your favourite text editor. Keep config.ini in the same working directory as the script.
+**ONLY _url=_, _token=_ and _library=_ underneath the [plex] header need to be set for the script to work**.
 
-**PLEX_URL** cannot end with a trailing slash - http://localhost:32400 & https://plex.woofwoof.wahoo are both fine,
-https://plex.woofwoof.wahoo/ is not.
+**url** cannot end with a trailing slash - _url=http://localhost:32400_ & _url=https://plex.woofwoof.wahoo_ are both fine,
+_url=https://plex.woofwoof.wahoo/_ is not.
 
-**PLEX_TOKEN** can be found using [this guide.](https://support.plex.tv/articles/204059436-finding-an-authentication-token-x-plex-token/)
-A token can also be found in Tautulli or Ombi if you're using them.
+**token** can be found using [this guide.](https://support.plex.tv/articles/204059436-finding-an-authentication-token-x-plex-token/)
+A token can also be found in Tautulli or Ombi if you're using them. _token=njkjdkHJJKAJKnjSAKJ_ is an example of correct formatting.
 
-**MOVIE_LIBRARIES** is pretty self explanatory. ['My Movies 1'], ['My Movies 1', 'My Movies 2'] are both valid examples.
+**library** is pretty self explanatory. Only 1 Library is supported at a time. _library=Movies_ is an example of corect formatting.
 
 They are the three variables most people will have to fill in. **_If you're using_** 'The Movie Database' agent instead of Plex Movie
-you'll also need to edit the TMDB_API_KEY variable.
-
-**That's all. Nothing else needs to be, or should be edited.**
+you'll also need to edit the _apikey_ variable located under [tmdb].
 
 # Usage
-Use pip to install the few listed requirements.
+If not using a standalone binary you need to install dependencies. Use pip to install the few listed requirements.
 
 pip install -r requirements.txt
 
