@@ -38,7 +38,7 @@ located under the [tmdb] header.
     library=Movies
 
     [tmdb]
-    apikey=
+    apikey=Optional
 
 # Usage
 If you are not using a [standalone binary](https://github.com/deva5610/IMDBList2PlexCollection/releases/) you'll need to install dependencies. Use pip to install the few listed requirements.
