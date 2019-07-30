@@ -1,3 +1,4 @@
+# Start with a nice clean screen
 import os
 os.system('cls' if os.name == 'nt' else 'clear')
 
@@ -25,7 +26,7 @@ import time
 from lxml import html
 from plexapi.server import PlexServer
 
-#Hacky solution for Python 2.x & 3.x compatibility
+# Hacky solution for Python 2.x & 3.x compatibility
 if hasattr(__builtins__, 'raw_input'):
  input=raw_input
 
@@ -38,7 +39,7 @@ print(" Automated IMDB Top 250 Plex collection script by /u/SwiftPanda16  ")
 print("===================================================================")
 print("\n")
 
-### Read Config File ###
+### ConfigParser Python2/3 Support ###
 
 try:
     # >3.2
@@ -50,15 +51,19 @@ except ImportError:
 
 parser = ConfigParser()
 
-# get the path to config.ini
+### Read config.ini ###
+
+# Get config.ini path
 config_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'config.ini')
+
+# Process config.ini
 parser.read(config_path)
 PLEX_URL = parser.get('plex', 'url')
 PLEX_TOKEN = parser.get('plex', 'token')
 MOVIE_LIBRARIES = {parser.get('plex', 'library')}
 TMDB_API_KEY = parser.get('tmdb', 'apikey')
 
-###IMDB List Details###
+### IMDB List Details ###
 
 IMDB_URL = input("IMDB List URL (eg - https://www.imdb.com/list/ls002400902/): ")
 print("\n")
