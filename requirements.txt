@@ -1,3 +1,4 @@
 plexapi
+tmdbv3api
 lxml
 requests
