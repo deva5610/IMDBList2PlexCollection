@@ -136,7 +136,7 @@ def run_imdb_sync():
     all_movies = []
     for movie_lib in MOVIE_LIBRARIES:
         try:
-            print("Retrieving a list of movies from the '{library}' library in Plex...".format(library=movie_lib))
+            print("Retrieving a list of movies from the '{library}' library in Plex.".format(library=movie_lib))
             print("\n")
             movie_library = plex.library.section(movie_lib)
             library_language = movie_library.language  # IMDB will use language from last library in list
@@ -174,7 +174,7 @@ def run_imdb_sync():
             imdb_map[m.ratingKey] = m
 
     # Add movies to the selected collection
-    print("Adding the collection '{}' to movies on the selected IMDB list...".format(IMDB_COLLECTION_NAME))
+    print("Adding the collection '{}' to movies on the selected IMDB list.".format(IMDB_COLLECTION_NAME))
     print("\n")
     in_library_idx = []
     for i, imdb_id in enumerate(title_ids):
