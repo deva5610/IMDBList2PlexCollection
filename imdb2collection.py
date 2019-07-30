@@ -23,6 +23,7 @@ import sys
 import json
 import requests
 import time
+import platform
 from lxml import html
 from plexapi.server import PlexServer
 
