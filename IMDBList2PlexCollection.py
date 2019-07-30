@@ -1,7 +1,3 @@
-# Start with a nice clean screen
-import os
-os.system('cls' if os.name == 'nt' else 'clear')
-
 #------------------------------------------------------------------------------
 #
 #	  Automated IMDB List to Plex Collection Script by /u/deva5610
@@ -18,7 +14,7 @@ os.system('cls' if os.name == 'nt' else 'clear')
 #############################################
 ##### CODE BELOW - DON'T EDIT BELOW HERE#####
 #############################################
-
+import os
 import sys
 import json
 import requests
@@ -26,6 +22,11 @@ import time
 import platform
 from lxml import html
 from plexapi.server import PlexServer
+from tmdbv3api import TMDb
+from tmdbv3api import Movie
+
+# Start with a nice clean screen
+os.system('cls' if os.name == 'nt' else 'clear')
 
 # Hacky solution for Python 2.x & 3.x compatibility
 if hasattr(__builtins__, 'raw_input'):
@@ -114,9 +115,7 @@ def run_imdb_sync():
     title_years = tree.xpath("//div[contains(@class, 'lister-item-content')]//h3[contains(@class, 'lister-item-header')]//span[contains(@class, 'lister-item-year')]/text()")
     title_ids = tree.xpath("//div[contains(@class, 'lister-item-image')]//a/img//@data-tconst")
 
-# Create a dictionary of {imdb_id: movie}, and convert TMDB to IMDB ID
-    from tmdbv3api import TMDb
-    from tmdbv3api import Movie
+# Convert TMDB to IMDB ID and create a dictionary of {imdb_id: movie} 
     tmdb = TMDb()
     tmdb.api_key = parser.get('tmdb', 'apikey')
     movie = Movie()
