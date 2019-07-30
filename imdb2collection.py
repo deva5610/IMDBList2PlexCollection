@@ -1,10 +1,5 @@
 import os
 os.system('cls' if os.name == 'nt' else 'clear')
-import json
-import requests
-import time
-from lxml import html
-from plexapi.server import PlexServer
 
 #------------------------------------------------------------------------------
 #
@@ -22,6 +17,13 @@ from plexapi.server import PlexServer
 #############################################
 ##### CODE BELOW - DON'T EDIT BELOW HERE#####
 #############################################
+
+import sys
+import json
+import requests
+import time
+from lxml import html
+from plexapi.server import PlexServer
 
 #Hacky solution for Python 2.x & 3.x compatibility
 if hasattr(__builtins__, 'raw_input'):
@@ -59,7 +61,9 @@ TMDB_API_KEY = parser.get('tmdb', 'apikey')
 ###IMDB List Details###
 
 IMDB_URL = input("IMDB List URL (eg - https://www.imdb.com/list/ls002400902/): ")
+print("\n")
 IMDB_COLLECTION_NAME = input("Collection Name (eg - Disney Classics): ")
+print("\n")
 
 TMDB_REQUEST_COUNT = 0  # DO NOT CHANGE
 
@@ -116,24 +120,32 @@ def run_imdb_sync():
         plex = PlexServer(PLEX_URL, PLEX_TOKEN)
     except:
         print("No Plex server found at: {base_url}".format(base_url=PLEX_URL))
-        print("Exiting script.")
-        return [], 0
+        print("Please check that config.ini exists, and is correct.")
+        print("If the URL displayed is correct, your token may be incorrect.")
+        print("\n")
+        input("Press Enter to exit")
+        sys.exit()
+
 
     # Get list of movies from the Plex server
     all_movies = []
     for movie_lib in MOVIE_LIBRARIES:
         try:
             print("Retrieving a list of movies from the '{library}' library in Plex...".format(library=movie_lib))
+            print("\n")
             movie_library = plex.library.section(movie_lib)
             library_language = movie_library.language  # IMDB will use language from last library in list
             all_movies.extend(movie_library.all())
         except:
             print("The '{library}' library does not exist in Plex.".format(library=movie_lib))
-            print("Exiting script.")
-            return [], 0
+            print("Please check that config.ini exists, and is correct.")
+            print("\n")
+            input("Press Enter to exit")
+            sys.exit()
 
     # Get the requested imdb list
     print("Retrieving movies from selected IMDB list.")
+    print("\n")
     r = requests.get(IMDB_URL, headers={'Accept-Language': library_language})
     tree = html.fromstring(r.content)
     title_name = tree.xpath("//div[contains(@class, 'lister-item-content')]//h3[contains(@class, 'lister-item-header')]//a/text()")
@@ -158,6 +170,7 @@ def run_imdb_sync():
 
     # Add movies to the selected collection
     print("Adding the collection '{}' to movies on the selected IMDB list...".format(IMDB_COLLECTION_NAME))
+    print("\n")
     in_library_idx = []
     for i, imdb_id in enumerate(title_ids):
         movie = imdb_map.pop(imdb_id, None)
