@@ -11,7 +11,7 @@ different installs now with 0 problems. **This doesn't mean it will for you.** I
 decide to mess with your Plex server. Maybe spin up a small test library before deploying it on a big library if you're concerned
 about my lack of ability!
 
-# Installation
+# Configuration
 Create or edit config.ini with your favourite text editor. Keep config.ini in the same working directory as the script. 
 
 **ONLY _"url="_, _"token="_ and _"library="_ underneath the [plex] header need to be set for the script to work**.
