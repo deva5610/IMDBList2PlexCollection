@@ -29,6 +29,15 @@ They are the three variables most people will have to fill in.
 **_If, and only IF you're using_** 'The Movie Database' agent instead of Plex Movie you'll also need to edit the _**apikey=**_ variable
 located under the [tmdb] header.
 
+**Once complete it should look like**
+[plex]
+url=http://PLEXSERVERURL:32400
+token=REPLACEmeWITHyourTOKEN
+library=Movies
+
+[tmdb]
+apikey=
+
 # Usage
 If you are not using a [standalone binary](https://github.com/deva5610/IMDBList2PlexCollection/releases/) you'll need to install dependencies. Use pip to install the few listed requirements.
 
