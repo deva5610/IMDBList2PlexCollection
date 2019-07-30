@@ -1,5 +1,6 @@
 # IMDBList2PlexCollection
-Simple script/[standalone build](https://github.com/deva5610/IMDBList2PlexCollection/releases/) to take an IMDB list, match the movies in your Plex Library and turn them into a collection.
+Simple script/[standalone build](https://github.com/deva5610/IMDBList2PlexCollection/releases/) to take an IMDB list, match the movies
+in your Plex Library and turn them into a collection.
 
 This script is a modified version of [this excellent script](https://gist.github.com/JonnyWong16/f5b9af386ea58e19bf18c09f2681df23).
 
@@ -30,13 +31,14 @@ They are the three variables most people will have to fill in.
 located under the [tmdb] header.
 
 **Once complete it should look like**
-[plex]
-url=http://PLEXSERVERURL:32400
-token=REPLACEmeWITHyourTOKEN
-library=Movies
 
-[tmdb]
-apikey=
+    [plex]
+    url=http://PLEXSERVERURL:32400
+    token=REPLACEmeWITHyourTOKEN
+    library=Movies
+
+    [tmdb]
+    apikey=
 
 # Usage
 If you are not using a [standalone binary](https://github.com/deva5610/IMDBList2PlexCollection/releases/) you'll need to install dependencies. Use pip to install the few listed requirements.
