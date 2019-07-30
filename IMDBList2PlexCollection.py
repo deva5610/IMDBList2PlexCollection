@@ -52,8 +52,6 @@ except ImportError:
 
 parser = ConfigParser()
 
-### Read config.ini ###
-
 # Get config.ini path
 config_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'config.ini')
 
@@ -62,16 +60,12 @@ parser.read(config_path)
 PLEX_URL = parser.get('plex', 'url')
 PLEX_TOKEN = parser.get('plex', 'token')
 MOVIE_LIBRARIES = {parser.get('plex', 'library')}
-TMDB_API_KEY = parser.get('tmdb', 'apikey')
 
-### IMDB List Details ###
-
+# IMDB List Details
 IMDB_URL = input("IMDB List URL (eg - https://www.imdb.com/list/ls002400902/): ")
 print("\n")
 IMDB_COLLECTION_NAME = input("Collection Name (eg - Disney Classics): ")
 print("\n")
-
-TMDB_REQUEST_COUNT = 0  # DO NOT CHANGE
 
 def add_collection(library_key, rating_key):
     headers = {"X-Plex-Token": PLEX_TOKEN}
@@ -84,43 +78,6 @@ def add_collection(library_key, rating_key):
     url = "{base_url}/library/sections/{library}/all".format(base_url=PLEX_URL, library=library_key)
     r = requests.put(url, headers=headers, params=params)
 
-
-def remove_collection(library_key, rating_key):
-    headers = {"X-Plex-Token": PLEX_TOKEN}
-    params = {"type": 1,
-              "id": rating_key,
-              "collection[].tag.tag-": IMDB_COLLECTION_NAME
-              }
-
-    url = "{base_url}/library/sections/{library}/all".format(base_url=PLEX_URL, library=library_key)
-    r = requests.put(url, headers=headers, params=params)
-
-
-def get_imdb_id_from_tmdb(tmdb_id):
-    global TMDB_REQUEST_COUNT
-    
-    if not TMDB_API_KEY:
-        return None
-    
-    # Wait 10 seconds for the TMDb rate limit
-    if TMDB_REQUEST_COUNT >= 40:
-        time.sleep(10)
-        TMDB_REQUEST_COUNT = 0
-    
-    params = {"api_key": TMDB_API_KEY}
-    
-    url = "https://api.themoviedb.org/3/movie/{tmdb_id}".format(tmdb_id=tmdb_id)
-    r = requests.get(url, params=params)
-    
-    TMDB_REQUEST_COUNT += 1
-    
-    if r.status_code == 200:
-        movie = json.loads(r.text)
-        return movie['imdb_id']
-    else:
-        return None
-    
-    
 def run_imdb_sync():
     try:
         plex = PlexServer(PLEX_URL, PLEX_TOKEN)
@@ -132,8 +89,7 @@ def run_imdb_sync():
         input("Press Enter to exit")
         sys.exit()
 
-
-    # Get list of movies from the Plex server
+# Get list of movies from the Plex server
     all_movies = []
     for movie_lib in MOVIE_LIBRARIES:
         try:
@@ -149,7 +105,7 @@ def run_imdb_sync():
             input("Press Enter to exit")
             sys.exit()
 
-    # Get the requested imdb list
+# Get the requested imdb list
     print("Retrieving movies from selected IMDB list.")
     print("\n")
     r = requests.get(IMDB_URL, headers={'Accept-Language': library_language})
@@ -158,14 +114,20 @@ def run_imdb_sync():
     title_years = tree.xpath("//div[contains(@class, 'lister-item-content')]//h3[contains(@class, 'lister-item-header')]//span[contains(@class, 'lister-item-year')]/text()")
     title_ids = tree.xpath("//div[contains(@class, 'lister-item-image')]//a/img//@data-tconst")
 
-    # Create a dictionary of {imdb_id: movie}
+# Create a dictionary of {imdb_id: movie}, and convert TMDB to IMDB ID
+    from tmdbv3api import TMDb
+    from tmdbv3api import Movie
+    tmdb = TMDb()
+    tmdb.api_key = parser.get('tmdb', 'apikey')
+    movie = Movie()
     imdb_map = {}
     for m in all_movies:
-        if 'imdb://' in m.guid:
-            imdb_id = m.guid.split('imdb://')[1].split('?')[0]
-        elif 'themoviedb://' in m.guid:
+        if 'themoviedb://' in m.guid:
             tmdb_id = m.guid.split('themoviedb://')[1].split('?')[0]
-            imdb_id = get_imdb_id_from_tmdb(tmdb_id)
+            tmdbapi = movie.details(tmdb_id)
+            imdb_id = tmdbapi.imdb_id
+        elif 'imdb://' in m.guid:
+            imdb_id = m.guid.split('imdb://')[1].split('?')[0]
         else:
             imdb_id = None
             
@@ -174,7 +136,7 @@ def run_imdb_sync():
         else:
             imdb_map[m.ratingKey] = m
 
-    # Add movies to the selected collection
+# Add movies to the selected collection
     print("Adding the collection '{}' to movies on the selected IMDB list.".format(IMDB_COLLECTION_NAME))
     print("\n")
     in_library_idx = []
@@ -184,20 +146,11 @@ def run_imdb_sync():
             add_collection(movie.librarySectionID, movie.ratingKey)
             in_library_idx.append(i)
 
-### See no reason to remove movies yet. Commenting this section out for now. ###
-#            
-#    # Remove movies from collection with are no longer on the IMDB Top 250 list
-#    print("Removing the collection '{}' from movies not on the IMDB Top 250 list...".format(IMDB_COLLECTION_NAME))
-#    count = 0
-#    for movie in imdb_map.values():
-#        remove_collection(movie.librarySectionID, movie.ratingKey)
-    
-    # Get list of missing movies from selected list
+# Get list of missing movies from selected list
     missing_imdb_movies = [(idx, imdb) for idx, imdb in enumerate(zip(title_ids, title_name, title_years))
                         if idx not in in_library_idx]
 
     return missing_imdb_movies, len(title_ids)
-
 
 if __name__ == "__main__":
 
@@ -218,4 +171,4 @@ if __name__ == "__main__":
     print("                               Done!                               ")
     print("===================================================================\n")
     
-    input("Press Enter to finish.")
+    input("Press Enter to finish."
