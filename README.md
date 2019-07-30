@@ -32,7 +32,7 @@ located under the [tmdb] header.
 # Usage
 If you are not using a [standalone binary](https://github.com/deva5610/IMDBList2PlexCollection/releases/) you'll need to install dependencies. Use pip to install the few listed requirements.
 
-pip install -r requirements.txt **_OR_** "pip install lxml" "pip install plexapi" "pip install requests" in turn.
+pip install -r requirements.txt **_OR_** "pip install lxml" "pip install plexapi" "pip install requests" "pip install tmdbv3api" in turn.
 
 Run the script with "python imdb2collection.py" and follow the instructions. You'll want two things. A URL to the IMDB list you want to match (eg - https://www.imdb.com/list/ls064646512/) and to decide what you want the matching movies to be tagged as
 (eg - Pixar, Pixar Movies, Pixar Animations, etc - all 3 are valid entries when asked).
