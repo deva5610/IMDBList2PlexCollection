@@ -23,7 +23,7 @@ examples of proper formatting, _**url=https://plex.woofwoof.wahoo/**_ is not.
 **token=** can be found using [this guide.](https://support.plex.tv/articles/204059436-finding-an-authentication-token-x-plex-token/)
 A token can also be found in Tautulli or Ombi if you're using them. _**token=njkjdkHJJKAJKnjSAKJ**_ is an example of correct formatting.
 
-**library=** is pretty self explanatory. Only 1 Library is supported at a time. _**library=Movies**_ is an example of corect formatting.
+**library=** is pretty self explanatory. Multiple libraries supported, seperated by a comma ",". _**library=Movies and library=4K Movies,Movies,Kids Movies**_ are examples of correct formatting.
 
 They are the three variables most people will have to fill in.
 
@@ -35,7 +35,7 @@ located under the [tmdb] header.
     [plex]
     url=http://PLEXSERVERURL:32400
     token=REPLACEmeWITHyourTOKEN
-    library=Movies
+    library=Movies,Test Library,Kids
 
     [tmdb]
     apikey=Optional
