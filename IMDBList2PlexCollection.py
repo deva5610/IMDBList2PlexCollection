@@ -122,9 +122,12 @@ def run_imdb_sync():
     imdb_map = {}
     for m in all_movies:
         if 'themoviedb://' in m.guid:
-            tmdb_id = m.guid.split('themoviedb://')[1].split('?')[0]
-            tmdbapi = movie.details(tmdb_id)
-            imdb_id = tmdbapi.imdb_id
+            if tmdb.api_key:
+                tmdb_id = m.guid.split('themoviedb://')[1].split('?')[0]
+                tmdbapi = movie.details(tmdb_id)
+                imdb_id = tmdbapi.imdb_id
+            else:
+                imdb_id = None
         elif 'imdb://' in m.guid:
             imdb_id = m.guid.split('imdb://')[1].split('?')[0]
         else:
