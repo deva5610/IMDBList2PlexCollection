@@ -66,7 +66,7 @@ if not didreadreadme:
 parser.read(config_path)
 PLEX_URL = parser.get('plex', 'url')
 PLEX_TOKEN = parser.get('plex', 'token')
-MOVIE_LIBRARIES = {parser.get('plex', 'library')}
+MOVIE_LIBRARIES = parser.get('plex', 'library').split(',')
 
 # IMDB List Details
 IMDB_COLLECTION_NAME = input("Collection Name (eg - Disney Classics): ")
