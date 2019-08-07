@@ -48,7 +48,7 @@ pip install -r requirements.txt **_OR_** "pip install lxml" "pip install plexapi
 Run the script with "python imdb2collection.py" and follow the instructions. You'll want two things. A URL to the IMDB list you want to match (eg - https://www.imdb.com/list/ls064646512/) and to decide what you want the matching movies to be tagged as
 (eg - Pixar, Pixar Movies, Pixar Animations, etc - all 3 are valid entries when asked).
 
-***Note - You can only use the base URL (eg - https://www.imdb.com/list/ls064646512/) if there's any parameters after the last trailing slash, the program may not run properly. IMDB Searches are no longer supported***
+***Note - You can only use the base URL (eg - https://www.imdb.com/list/ls064646512/) if there are any parameters after the last trailing slash, the program may not run properly. IMDB Searches are no longer supported***
 
 That's it. The script should (hopefully!) run, it'll match movies from the IMDB list to your Movies Library and tag them into the
 collection you specified.
