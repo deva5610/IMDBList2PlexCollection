@@ -23,7 +23,7 @@ examples of proper formatting, _**url=https://plex.woofwoof.wahoo/**_ is not.
 **token=** can be found using [this guide.](https://support.plex.tv/articles/204059436-finding-an-authentication-token-x-plex-token/)
 A token can also be found in Tautulli or Ombi if you're using them. _**token=njkjdkHJJKAJKnjSAKJ**_ is an example of correct formatting.
 
-**library=** is pretty self explanatory. Only 1 Library is supported at a time. _**library=Movies**_ is an example of corect formatting.
+**library=** is pretty self explanatory. Multiple libraries supported, seperated by a comma ",". _**library=Movies and library=4K Movies,Movies,Kids Movies**_ are examples of correct formatting.
 
 They are the three variables most people will have to fill in.
 
@@ -35,10 +35,10 @@ located under the [tmdb] header.
     [plex]
     url=http://PLEXSERVERURL:32400
     token=REPLACEmeWITHyourTOKEN
-    library=Movies
+    library=Movies,Test Library,Kids
 
     [tmdb]
-    apikey=
+    apikey=Optional
 
 # Usage
 If you are not using a [standalone binary](https://github.com/deva5610/IMDBList2PlexCollection/releases/) you'll need to install dependencies. Use pip to install the few listed requirements.
@@ -48,7 +48,7 @@ pip install -r requirements.txt **_OR_** "pip install lxml" "pip install plexapi
 Run the script with "python imdb2collection.py" and follow the instructions. You'll want two things. A URL to the IMDB list you want to match (eg - https://www.imdb.com/list/ls064646512/) and to decide what you want the matching movies to be tagged as
 (eg - Pixar, Pixar Movies, Pixar Animations, etc - all 3 are valid entries when asked).
 
-***Note - IMDB Lists are supported in their default 'detailed' view, as are the result pages from the powerful [IMDB search engine.](https://www.imdb.com/search/title/)***
+***Note - You can only use the base URL (eg - https://www.imdb.com/list/ls064646512/) if there are any parameters after the last trailing slash, the program may not run properly. IMDB Searches are no longer supported***
 
 That's it. The script should (hopefully!) run, it'll match movies from the IMDB list to your Movies Library and tag them into the
 collection you specified.
