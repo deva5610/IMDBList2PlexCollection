@@ -65,6 +65,10 @@ if not didreadreadme:
 # Process config.ini
 parser.read(config_path)
 PLEX_URL = parser.get('plex', 'url')
+# Strip trailing slashes from URL
+slash = '/'
+if (PLEX_URL[-1] == slash):
+    PLEX_URL = PLEX_URL.rstrip('//')
 PLEX_TOKEN = parser.get('plex', 'token')
 MOVIE_LIBRARIES = parser.get('plex', 'library').split(',')
 
@@ -77,7 +81,6 @@ def script():
 #IMDB URL input
     IMDB_URL = input("IMDB List URL (eg - https://www.imdb.com/list/ls002400902/): ")
     print("\n")
-    slash = '/'
     if not (IMDB_URL[-1] == slash):
         IMDB_URL = IMDB_URL + '/'
 
