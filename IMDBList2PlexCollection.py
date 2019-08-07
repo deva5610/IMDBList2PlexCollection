@@ -73,8 +73,17 @@ IMDB_COLLECTION_NAME = input("Collection Name (eg - Disney Classics): ")
 print("\n")
 
 def script():
-    IMDB_URL = input("IMDB List URL (eg - https://www.imdb.com/list/ls002400902/): ")
-    print("\n")
+	
+#IMDB URL input
+	IMDB_URL = input("IMDB List URL (eg - https://www.imdb.com/list/ls002400902/): ")
+	print("\n")
+	slash = '/'
+	if not (IMDB_URL[-1] == slash):
+		IMDB_URL = IMDB_URL + '/'
+
+#How many pages do we want to scrape?
+	PAGE_NUMBERS = input("How many pages do you want to scrape on this IMDB list? (Eg - 5): ")
+	print("\n")
 
     def add_collection(library_key, rating_key):
         headers = {"X-Plex-Token": PLEX_TOKEN}
@@ -115,13 +124,19 @@ def script():
                 sys.exit()
 
 # Get the requested imdb list
-        print("Retrieving movies from selected IMDB list.")
-        print("\n")
-        r = requests.get(IMDB_URL, headers={'Accept-Language': library_language})
-        tree = html.fromstring(r.content)
-        title_name = tree.xpath("//div[contains(@class, 'lister-item-content')]//h3[contains(@class, 'lister-item-header')]//a/text()")
-        title_years = tree.xpath("//div[contains(@class, 'lister-item-content')]//h3[contains(@class, 'lister-item-header')]//span[contains(@class, 'lister-item-year')]/text()")
-        title_ids = tree.xpath("//div[contains(@class, 'lister-item-image')]//a/img//@data-tconst")
+		print("Retrieving movies from selected IMDB list. Depending on the amount of pages selected, this might take a few minutes.")
+		print("\n")
+		maxpages = int(PAGE_NUMBERS) + 1
+		title_name = []
+		title_years = []
+		title_ids = []
+		for i in range(1,maxpages):
+			url = IMDB_URL + '?page={}'.format(i)
+			r = requests.get(url, headers={'Accept-Language': library_language})
+			tree = html.fromstring(r.content)
+			title_name.extend(tree.xpath("//div[contains(@class, 'lister-item-content')]//h3[contains(@class, 'lister-item-header')]//a/text()"))
+			title_years.extend(tree.xpath("//div[contains(@class, 'lister-item-content')]//h3[contains(@class, 'lister-item-header')]//span[contains(@class, 'lister-item-year')]/text()"))
+			title_ids.extend(tree.xpath("//div[contains(@class, 'lister-item-image')]//a/img//@data-tconst"))
 
 # Convert TMDB to IMDB ID and create a dictionary of {imdb_id: movie} 
         tmdb = TMDb()
