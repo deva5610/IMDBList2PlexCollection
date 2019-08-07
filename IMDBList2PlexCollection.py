@@ -124,7 +124,7 @@ def script():
                 sys.exit()
 
 # Get the requested imdb list
-        print("Retrieving movies from selected IMDB list. Depending on the amount of pages selected, this might take a few minutes.")
+        print("Retrieving movies from selected IMDB list. Depending on the amount of pages selected this might take a few minutes.")
         print("\n")
         maxpages = int(PAGE_NUMBERS) + 1
         title_name = []
@@ -139,16 +139,23 @@ def script():
             title_ids.extend(tree.xpath("//div[contains(@class, 'lister-item-image')]//a/img//@data-tconst"))
 
 # Convert TMDB to IMDB ID and create a dictionary of {imdb_id: movie} 
+        print("Matching IMDB IDs to Library. For large Libraries using TMDB agent this step can take a long time.")
+        print("\n")
+        reqcount = 0
         tmdb = TMDb()
         tmdb.api_key = parser.get('tmdb', 'apikey')
         movie = Movie()
         imdb_map = {}
         for m in all_movies:         
             if 'themoviedb://' in m.guid:
+                if reqcount >= 10:
+                    time.sleep(2.5)
+                    reqcount = 0
                 if tmdb.api_key:
                     tmdb_id = m.guid.split('themoviedb://')[1].split('?')[0]
                     tmdbapi = movie.details(tmdb_id)
                     imdb_id = tmdbapi.imdb_id
+                    reqcount += 1
                 else:
                     imdb_id = None
             elif 'imdb://' in m.guid:
@@ -162,7 +169,7 @@ def script():
                 imdb_map[m.ratingKey] = m
 
 # Add movies to the selected collection
-        print("Adding the collection '{}' to movies on the selected IMDB list.".format(IMDB_COLLECTION_NAME))
+        print("Adding the collection '{}' to matched movies.".format(IMDB_COLLECTION_NAME))
         print("\n")
         in_library_idx = []
         for i, imdb_id in enumerate(title_ids):
