@@ -85,7 +85,7 @@ def script():
         IMDB_URL = IMDB_URL + '/'
 
 #How many pages do we want to scrape?
-    PAGE_NUMBERS = input("How many pages do you want to scrape on this IMDB list? (Eg - 5): ")
+    PAGE_NUMBERS = int(raw_input("How many pages do you want to scrape on this IMDB list? (default: 1): ") or "1")
     print("\n")
 
     def add_collection(library_key, rating_key):
