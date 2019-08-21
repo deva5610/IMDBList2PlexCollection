@@ -206,9 +206,7 @@ def script():
         print("                               Done!                               ")
         print("===================================================================\n")
         print("\n")
-        print("Would you like to add more movies from IMDB to this collection?")
-        print("\n")
-        EOS = input("Input Y to continue, or N to exit - ")
+        EOS = input("Would you like to add more movies from IMDB to this collection? [y/N]") or "N"
         if EOS == "Y" or EOS == "y":
             print("\n")
             script()
