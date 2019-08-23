@@ -155,10 +155,14 @@ def script():
                     time.sleep(2.5)
                     reqcount = 0
                 if tmdb.api_key:
-                    tmdb_id = m.guid.split('themoviedb://')[1].split('?')[0]
-                    tmdbapi = movie.details(tmdb_id)
-                    imdb_id = tmdbapi.imdb_id
-                    reqcount += 1
+                    try:
+                        tmdb_id = m.guid.split('themoviedb://')[1].split('?')[0]
+                        tmdbapi = movie.details(tmdb_id)
+                        imdb_id = tmdbapi.imdb_id
+                        reqcount += 1
+                    except AttributeError:
+                        imdb_id = None
+                        reqcount += 1
                 else:
                     imdb_id = None
             elif 'imdb://' in m.guid:
