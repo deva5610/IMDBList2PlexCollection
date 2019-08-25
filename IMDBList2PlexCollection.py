@@ -1,10 +1,10 @@
 #------------------------------------------------------------------------------
 #
-#     Automated IMDB List to Plex Collection Script by /u/deva5610
+#      Automated IMDB List to Plex Collection Script by /u/deva5610 - V1.2
 #
-#              Created by modifiying the excellent
+#                      Created by modifiying the excellent
 #
-#       Automated IMDB Top 250 Plex collection script by /u/SwiftPanda16
+#        Automated IMDB Top 250 Plex collection script by /u/SwiftPanda16
 #
 #                         *** USE AT YOUR OWN RISK! ***
 #   *** I AM NOT RESPONSIBLE FOR DAMAGE TO YOUR PLEX SERVER OR LIBRARIES! ***
