@@ -35,7 +35,7 @@ if hasattr(__builtins__, 'raw_input'):
 
 ### Header ###
 print("===================================================================")
-print(" Automated IMDB List to Collection script by /u/deva5610  ")
+print(" Automated IMDB List to Collection script by /u/deva5610 - V1.2 ")
 print(" Created by modifiying the excellent  ")
 print(" Automated IMDB Top 250 Plex collection script by /u/SwiftPanda16  ")
 print("===================================================================")
