@@ -103,9 +103,9 @@ def script():
         try:
             plex = PlexServer(PLEX_URL, PLEX_TOKEN)
         except:
-            print("No Plex server found at: {base_url}".format(base_url=PLEX_URL))
+            print("Whoopsie! There's an error connecting to the Plex server at: {base_url}".format(base_url=PLEX_URL))
             print("Please check that config.ini exists, and is correct.")
-            print("If the URL displayed is correct, your token may be incorrect.")
+            print("If the URL displayed is the correct URL for your server, then your token may be incorrect.")
             print("\n")
             input("Press Enter to exit")
             sys.exit()
