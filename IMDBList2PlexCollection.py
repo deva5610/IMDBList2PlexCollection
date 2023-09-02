@@ -28,8 +28,11 @@ from bs4 import BeautifulSoup
 import re
 import traceback  # Added for error handling
 
+# Define the path to your config.ini file
+CONFIG_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'config.ini')
+
 # Start with a nice clean screen
-os.system('cls' if os.name == 'nt' else 'clear')
+#os.system('cls' if os.name == 'nt' else 'clear')
 
 # Hacky solution for Python 2.x & 3.x compatibility
 if hasattr(__builtins__, 'raw_input'):
@@ -56,6 +59,10 @@ PLEX_URL = config.get('plex', 'url')
 PLEX_TOKEN = config.get('plex', 'token')
 MOVIE_LIBRARIES = config.get('plex', 'library').split(',')
 TMDB_API_KEY = config.get('tmdb', 'apikey')
+
+#except Exception as e:
+#    print(f"Error loading configuration from {config_path}: {str(e)}")
+#    sys.exit(1)
 
 def validate_input(imdb_url, page_numbers):
     # Validate user inputs for IMDb URL and page numbers
@@ -101,15 +108,26 @@ def retrieve_movies_from_plex(plex, movie_libraries):
             traceback.print_exc()  # Print the exception and its traceback
     return all_movies
 
+def extract_year(year_element_text):
+    # Extract the year from the text, handling different formats
+    year_matches = re.findall(r'\d{4}', year_element_text)
+    if year_matches:
+        return int(year_matches[-1])
+    return None
+    
 def retrieve_movies_from_imdb(imdb_url, page_numbers):
-    # Retrieve movies from IMDb list
+    # Retrieve movies from IMDb list with English titles
     imdb_movies = []
+    
+    headers = {
+        "Accept-Language": "en-US,en;q=0.9",  # Set the desired language here
+    }
 
     for page in range(1, int(page_numbers) + 1):
         page_url = f"{imdb_url}?page={page}"
 
         try:
-            response = requests.get(page_url)
+            response = requests.get(page_url, headers=headers)
             response.raise_for_status()  # Raise an exception for HTTP errors
         except Exception as e:
             print(f"Failed to retrieve page {page} from IMDb: {str(e)}")
@@ -127,19 +145,21 @@ def retrieve_movies_from_imdb(imdb_url, page_numbers):
 
                 # Check if all required elements are found
                 if title_element and year_element and imdb_link:
-                    title = title_element.find("a").text.strip()
-                    
-                    # Extract the year and handle variations in the format
-                    year_text = year_element.text.strip('()')
-                    year = ''.join(filter(str.isdigit, year_text))  # Extract digits from the year text
+                    try:
+                        title = title_element.find("a").text.strip()
+                        year = extract_year(year_element.text)
 
-                    imdb_id = imdb_link["href"].split("/title/")[1].split("/")[0]
+                        imdb_id = imdb_link["href"].split("/title/")[1].split("/")[0]
 
-                    imdb_movies.append({
-                        "title": title,
-                        "year": year,
-                        "imdb_id": imdb_id
-                    })
+                        imdb_movies.append({
+                            "title": title,
+                            "year": year,
+                            "imdb_id": imdb_id
+                        })
+                        print(f"Scraped Movie: '{title}' (IMDb ID: {imdb_id}, Year: {year})")
+                    except Exception as e:
+                        print(f"Failed to process movie data on page {page} for movie '{title}' (IMDb ID: {imdb_id}): {str(e)}")
+                        traceback.print_exc()  # Print the exception and its traceback
                 else:
                     print(f"Failed to extract movie data from page {page}. Missing elements:")
                     if not title_element:
@@ -150,9 +170,8 @@ def retrieve_movies_from_imdb(imdb_url, page_numbers):
                         print("- IMDb link element not found.")
         else:
             print(f"Failed to retrieve page {page} from IMDb.")
-
     return imdb_movies
-    
+                    
 def match_imdb_to_plex_movies(plex_movies, imdb_movies):
     # Match IMDb movies to Plex movies
     imdb_to_plex_map = {}
@@ -187,7 +206,6 @@ def is_matching(imdb_movie, plex_movie):
 def run_imdb_sync():
     try:
         os.system('cls' if os.name == 'nt' else 'clear')
-        PLEX_URL, PLEX_TOKEN, MOVIE_LIBRARIES, TMDB_API_KEY = load_config(CONFIG_PATH)
         imdb_url = input("IMDB List URL (e.g., https://www.imdb.com/list/ls002400902/): ")
         page_numbers = input("How many pages do you want to scrape on this IMDB list? (default: 1): ") or "1"
         validate_input(imdb_url, page_numbers)
@@ -196,7 +214,7 @@ def run_imdb_sync():
         global IMDB_COLLECTION_NAME
         IMDB_COLLECTION_NAME = input("Collection Name (e.g., Disney Classics): ")
 
-        plex = PlexServer(PLEX_URL, PLEX_TOKEN)
+        plex = PlexServer(PLEX_URL, PLEX_TOKEN)  # Use the global values defined earlier
         plex_movies = retrieve_movies_from_plex(plex, MOVIE_LIBRARIES)
 
         imdb_movies = retrieve_movies_from_imdb(imdb_url, page_numbers)
