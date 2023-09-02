@@ -25,7 +25,7 @@ from tmdbv3api import TMDb
 from tmdbv3api import Movie
 from configparser import ConfigParser
 from bs4 import BeautifulSoup
-import re
+import traceback  # Added for error handling
 
 # Constants and configurations
 CONFIG_PATH = 'config.ini'
@@ -73,11 +73,14 @@ def add_collection(library_key, rating_key):
         "collection.locked": 1
     }
     url = f"{PLEX_URL}/library/sections/{library_key}/all"
-    response = requests.put(url, headers=headers, params=params)
-    if response.status_code == 200:
+
+    try:
+        response = requests.put(url, headers=headers, params=params)
+        response.raise_for_status()  # Raise an exception for HTTP errors
         print(f"Added movie to collection: {rating_key}")
-    else:
+    except Exception as e:
         print(f"Failed to add movie to collection: {rating_key}")
+        traceback.print_exc()  # Print the exception and its traceback
 
 def retrieve_movies_from_plex(plex, movie_libraries):
     # Retrieve movies from Plex libraries
@@ -88,6 +91,7 @@ def retrieve_movies_from_plex(plex, movie_libraries):
             all_movies.extend(movie_library.all())
         except Exception as e:
             print(f"Error retrieving movies from '{movie_lib}' library: {str(e)}")
+            traceback.print_exc()  # Print the exception and its traceback
     return all_movies
 
 def retrieve_movies_from_imdb(imdb_url, page_numbers):
@@ -96,7 +100,15 @@ def retrieve_movies_from_imdb(imdb_url, page_numbers):
 
     for page in range(1, int(page_numbers) + 1):
         page_url = f"{imdb_url}?page={page}"
-        response = requests.get(page_url)
+
+        try:
+            response = requests.get(page_url)
+            response.raise_for_status()  # Raise an exception for HTTP errors
+        except Exception as e:
+            print(f"Failed to retrieve page {page} from IMDb: {str(e)}")
+            traceback.print_exc()  # Print the exception and its traceback
+            continue  # Continue to the next page
+
         if response.status_code == 200:
             soup = BeautifulSoup(response.text, 'html.parser')
             movie_elements = soup.find_all("div", class_="lister-item-content")
