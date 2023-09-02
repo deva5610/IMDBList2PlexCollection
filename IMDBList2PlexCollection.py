@@ -23,7 +23,7 @@ from lxml import html
 from plexapi.server import PlexServer
 from tmdbv3api import TMDb
 from tmdbv3api import Movie
-from configparser
+import configparser
 from bs4 import BeautifulSoup
 import re
 import traceback  # Added for error handling
