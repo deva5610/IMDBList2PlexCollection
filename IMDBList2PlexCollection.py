@@ -102,9 +102,13 @@ def retrieve_movies_from_imdb(imdb_url, page_numbers):
             movie_elements = soup.find_all("div", class_="lister-item-content")
 
             for movie_element in movie_elements:
-                title = movie_element.find("h3", class_="lister-item-header").find("a").text.strip()
-                year = movie_element.find("span", class_="lister-item-year").text.strip("()")
+                title_element = movie_element.find("h3", class_="lister-item-header")
+                year_element = movie_element.find("span", class_="lister-item-year")
                 imdb_id = movie_element.find("div", class_="lister-item-image").find("a")["data-tconst"]
+
+                title = title_element.find("a").text.strip() if title_element else "N/A"
+                year = year_element.text.strip("()") if year_element else "N/A"
+
                 imdb_movies.append({
                     "title": title,
                     "year": year,
