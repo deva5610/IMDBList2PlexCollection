@@ -25,6 +25,7 @@ from tmdbv3api import TMDb
 from tmdbv3api import Movie
 from configparser import ConfigParser
 from bs4 import BeautifulSoup
+import re
 import traceback  # Added for error handling
 
 # Constants and configurations
