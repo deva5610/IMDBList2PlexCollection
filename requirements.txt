@@ -2,3 +2,4 @@ plexapi
 tmdbv3api
 lxml
 requests
+beautifulsoup4
