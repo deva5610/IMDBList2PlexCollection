@@ -1,6 +1,6 @@
 #------------------------------------------------------------------------------
 #
-#      Automated IMDB List to Plex Collection Script by /u/deva5610 - V1.2
+#      Automated IMDB List to Plex Collection Script by /u/deva5610 - V2.0
 #
 #                      Created by modifiying the excellent
 #
@@ -16,7 +16,6 @@
 #############################################
 import os
 import sys
-import json
 import requests
 import time
 import platform
@@ -24,196 +23,158 @@ from lxml import html
 from plexapi.server import PlexServer
 from tmdbv3api import TMDb
 from tmdbv3api import Movie
+from configparser import ConfigParser
+from bs4 import BeautifulSoup
+import re
 
-# Start with a nice clean screen
-os.system('cls' if os.name == 'nt' else 'clear')
+# Constants and configurations
+CONFIG_PATH = 'config.ini'
 
-# Hacky solution for Python 2.x & 3.x compatibility
-if hasattr(__builtins__, 'raw_input'):
-    input=raw_input
+def load_config(config_path):
+    # Create a ConfigParser instance
+    config = ConfigParser()
 
+    try:
+        # Load the configuration file
+        config.read(config_path)
 
-### Header ###
-print("===================================================================")
-print(" Automated IMDB List to Collection script by /u/deva5610 - V1.2 ")
-print(" Created by modifiying the excellent  ")
-print(" Automated IMDB Top 250 Plex collection script by /u/SwiftPanda16  ")
-print("===================================================================")
-print("\n")
+        # Get configuration values
+        PLEX_URL = config.get('plex', 'url')
+        PLEX_TOKEN = config.get('plex', 'token')
+        MOVIE_LIBRARIES = config.get('plex', 'library').split(',')
+        TMDB_API_KEY = config.get('tmdb', 'apikey')
 
-### ConfigParser Python2/3 Support ###
+        return PLEX_URL, PLEX_TOKEN, MOVIE_LIBRARIES, TMDB_API_KEY
 
-try:
-    # >3.2
-    from configparser import ConfigParser
-except ImportError:
-    # python27
-    # Refer to the older SafeConfigParser as ConfigParser
-    from ConfigParser import SafeConfigParser as ConfigParser
+    except Exception as e:
+        print(f"Error loading configuration from {config_path}: {str(e)}")
+        sys.exit(1)
 
-parser = ConfigParser()
+def validate_input(imdb_url, page_numbers):
+    # Validate user inputs for IMDb URL and page numbers
+    imdb_url_pattern = r'^https:\/\/www\.imdb\.com\/list\/ls\d+\/$'
+    if not re.match(imdb_url_pattern, imdb_url):
+        raise ValueError("Invalid IMDb URL. It should be in the format 'https://www.imdb.com/list/ls<list_id>/'.")
 
-# Get config.ini path and check it exists!
-config_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'config.ini')
-didreadreadme = os.path.isfile(config_path)
-if not didreadreadme:
-    print("You need to read the README. Please create a config.ini in the same folder as this program.")
-    print("\n")
-    input("Press Enter to exit, and then go and read the README.")
-    sys.exit()
+    try:
+        page_numbers = int(page_numbers)
+        if page_numbers <= 0:
+            raise ValueError()
+    except ValueError:
+        raise ValueError("Page numbers should be a positive integer.")
 
-# Process config.ini
-parser.read(config_path)
-PLEX_URL = parser.get('plex', 'url')
-# Strip trailing slashes from URL
-slash = '/'
-if (PLEX_URL[-1] == slash):
-    PLEX_URL = PLEX_URL.rstrip('//')
-PLEX_TOKEN = parser.get('plex', 'token')
-MOVIE_LIBRARIES = parser.get('plex', 'library').split(',')
+def add_collection(library_key, rating_key):
+    # Add a movie to a Plex collection
+    headers = {"X-Plex-Token": PLEX_TOKEN}
+    params = {
+        "type": 1,
+        "id": rating_key,
+        "collection[0].tag.tag": IMDB_COLLECTION_NAME,
+        "collection.locked": 1
+    }
+    url = f"{PLEX_URL}/library/sections/{library_key}/all"
+    response = requests.put(url, headers=headers, params=params)
+    if response.status_code == 200:
+        print(f"Added movie to collection: {rating_key}")
+    else:
+        print(f"Failed to add movie to collection: {rating_key}")
 
-# IMDB List Details
-IMDB_COLLECTION_NAME = input("Collection Name (eg - Disney Classics): ")
-print("\n")
-
-def script():
-    
-#IMDB URL input
-    IMDB_URL = input("IMDB List URL (eg - https://www.imdb.com/list/ls002400902/): ")
-    print("\n")
-    if not (IMDB_URL[-1] == slash):
-        IMDB_URL = IMDB_URL + '/'
-
-#How many pages do we want to scrape?
-    PAGE_NUMBERS = input("How many pages do you want to scrape on this IMDB list? (default: 1): ") or "1"
-    print("\n")
-
-    def add_collection(library_key, rating_key):
-        headers = {"X-Plex-Token": PLEX_TOKEN}
-        params = {"type": 1,
-                  "id": rating_key,
-                  "collection[0].tag.tag": IMDB_COLLECTION_NAME,
-                  "collection.locked": 1
-                  }
-
-        url = "{base_url}/library/sections/{library}/all".format(base_url=PLEX_URL, library=library_key)
-        r = requests.put(url, headers=headers, params=params)
-
-    def run_imdb_sync():
+def retrieve_movies_from_plex(plex, movie_libraries):
+    # Retrieve movies from Plex libraries
+    all_movies = []
+    for movie_lib in movie_libraries:
         try:
-            plex = PlexServer(PLEX_URL, PLEX_TOKEN)
-        except:
-            print("Whoopsie! There's an error connecting to the Plex server at: {base_url}".format(base_url=PLEX_URL))
-            print("Please check that config.ini exists, and is correct.")
-            print("If the URL displayed is the correct URL for your server, then your token may be incorrect.")
-            print("\n")
-            input("Press Enter to exit")
-            sys.exit()
+            movie_library = plex.library.section(movie_lib)
+            all_movies.extend(movie_library.all())
+        except Exception as e:
+            print(f"Error retrieving movies from '{movie_lib}' library: {str(e)}")
+    return all_movies
 
-# Get list of movies from the Plex server
-        all_movies = []
-        for movie_lib in MOVIE_LIBRARIES:
-            try:
-                print("Retrieving a list of movies from the '{library}' library in Plex.".format(library=movie_lib))
-                print("\n")
-                movie_library = plex.library.section(movie_lib)
-                library_language = movie_library.language  # IMDB will use language from last library in list
-                all_movies.extend(movie_library.all())
-            except:
-                print("The '{library}' library does not exist in Plex.".format(library=movie_lib))
-                print("Please check that config.ini exists, and is correct.")
-                print("\n")
-                input("Press Enter to exit")
-                sys.exit()
+def retrieve_movies_from_imdb(imdb_url, page_numbers):
+    # Retrieve movies from IMDb list
+    imdb_movies = []
 
-# Get the requested imdb list
-        print("Retrieving movies from selected IMDB list. Depending on the amount of pages selected this might take a few minutes.")
-        print("\n")
-        maxpages = int(PAGE_NUMBERS) + 1
-        title_name = []
-        title_years = []
-        title_ids = []
-        for i in range(1,maxpages):
-            url = IMDB_URL + '?page={}'.format(i)
-            r = requests.get(url, headers={'Accept-Language': library_language})
-            tree = html.fromstring(r.content)
-            title_name.extend(tree.xpath("//div[contains(@class, 'lister-item-content')]//h3[contains(@class, 'lister-item-header')]//a/text()"))
-            title_years.extend(tree.xpath("//div[contains(@class, 'lister-item-content')]//h3[contains(@class, 'lister-item-header')]//span[contains(@class, 'lister-item-year')]/text()"))
-            title_ids.extend(tree.xpath("//div[contains(@class, 'lister-item-image')]//a/img//@data-tconst"))
+    for page in range(1, int(page_numbers) + 1):
+        page_url = f"{imdb_url}?page={page}"
+        response = requests.get(page_url)
+        if response.status_code == 200:
+            soup = BeautifulSoup(response.text, 'html.parser')
+            movie_elements = soup.find_all("div", class_="lister-item-content")
 
-# Convert TMDB to IMDB ID and create a dictionary of {imdb_id: movie} 
-        print("Matching IMDB IDs to Library. For large Libraries using TMDB agent this step can take a long time.")
-        print("\n")
-        reqcount = 0
-        tmdb = TMDb()
-        tmdb.api_key = parser.get('tmdb', 'apikey')
-        movie = Movie()
-        imdb_map = {}
-        for m in all_movies:         
-            if 'themoviedb://' in m.guid:
-                if reqcount >= 10:
-                    time.sleep(2.5)
-                    reqcount = 0
-                if tmdb.api_key:
-                    try:
-                        tmdb_id = m.guid.split('themoviedb://')[1].split('?')[0]
-                        tmdbapi = movie.details(tmdb_id)
-                        imdb_id = tmdbapi.imdb_id
-                        reqcount += 1
-                    except AttributeError:
-                        imdb_id = None
-                        reqcount += 1
-                else:
-                    imdb_id = None
-            elif 'imdb://' in m.guid:
-                imdb_id = m.guid.split('imdb://')[1].split('?')[0]
-            else:
-                imdb_id = None
-            
-            if imdb_id and imdb_id in title_ids:
-                imdb_map[imdb_id] = m
-            else:
-                imdb_map[m.ratingKey] = m
-
-# Add movies to the selected collection
-        print("Adding the collection '{}' to matched movies.".format(IMDB_COLLECTION_NAME))
-        print("\n")
-        in_library_idx = []
-        for i, imdb_id in enumerate(title_ids):
-            movie = imdb_map.pop(imdb_id, None)
-            if movie:
-                add_collection(movie.librarySectionID, movie.ratingKey)
-                in_library_idx.append(i)
-
-# Get list of missing movies from selected list
-        missing_imdb_movies = [(idx, imdb) for idx, imdb in enumerate(zip(title_ids, title_name, title_years))
-                            if idx not in in_library_idx]
-
-        return missing_imdb_movies, len(title_ids)
-
-    if __name__ == "__main__":
-
-        missing_imdb_movies, list_count = run_imdb_sync()
-    
-        print("\n===================================================================\n")
-        print("Number of IMDB movies from selected list in the library: {count}".format(count=list_count-len(missing_imdb_movies)))
-        print("Number of missing selected list movies: {count}".format(count=len(missing_imdb_movies)))
-        print("\nList of movies missing that are in selected IMDB list:\n")
-    
-        for idx, (imdb_id, title, year) in missing_imdb_movies:
-            if platform.python_version().startswith('2'):
-                print("{idx}\t{imdb_id}\t{title} {year}".format(idx=idx+1, imdb_id=imdb_id.encode('UTF-8'), title=title.encode('UTF-8'), year=year.encode('UTF-8')))
-            else:
-                print("{idx}\t{imdb_id}\t{title} {year}".format(idx=idx+1, imdb_id=imdb_id, title=title, year=year))
-    
-        print("\n===================================================================")
-        print("                               Done!                               ")
-        print("===================================================================\n")
-        print("\n")
-        EOS = input("Would you like to add more movies from IMDB to this collection? [y/N]") or "N"
-        if EOS == "Y" or EOS == "y":
-            print("\n")
-            script()
+            for movie_element in movie_elements:
+                title = movie_element.find("h3", class_="lister-item-header").find("a").text.strip()
+                year = movie_element.find("span", class_="lister-item-year").text.strip("()")
+                imdb_id = movie_element.find("div", class_="lister-item-image").find("a")["data-tconst"]
+                imdb_movies.append({
+                    "title": title,
+                    "year": year,
+                    "imdb_id": imdb_id
+                })
         else:
-            sys.exit()
-script()
+            print(f"Failed to retrieve page {page} from IMDb.")
+    
+    return imdb_movies
+
+def match_imdb_to_plex_movies(plex_movies, imdb_movies):
+    # Match IMDb movies to Plex movies
+    imdb_to_plex_map = {}
+    
+    for imdb_movie in imdb_movies:
+        matched_plex_movie = find_matching_plex_movie(imdb_movie, plex_movies)
+        if matched_plex_movie:
+            imdb_to_plex_map[imdb_movie["imdb_id"]] = matched_plex_movie
+    
+    return imdb_to_plex_map
+
+def find_matching_plex_movie(imdb_movie, plex_movies):
+    # Custom matching logic to find a Plex movie that matches the IMDb movie
+    for plex_movie in plex_movies:
+        if is_matching(imdb_movie, plex_movie):
+            return plex_movie
+    return None
+
+def is_matching(imdb_movie, plex_movie):
+    # Custom comparison logic to determine if an IMDb movie matches a Plex movie
+    imdb_title = imdb_movie["title"]
+    imdb_year = imdb_movie["year"]
+    plex_title = plex_movie.title
+    plex_year = plex_movie.year
+
+    # Example: Consider it a match if titles are the same and years are within +/- 1 year
+    if imdb_title == plex_title and abs(int(imdb_year) - int(plex_year)) <= 1:
+        return True
+
+    return False
+
+def run_imdb_sync():
+    try:
+        os.system('cls' if os.name == 'nt' else 'clear')
+        PLEX_URL, PLEX_TOKEN, MOVIE_LIBRARIES, TMDB_API_KEY = load_config(CONFIG_PATH)
+        imdb_url = input("IMDB List URL (e.g., https://www.imdb.com/list/ls002400902/): ")
+        page_numbers = input("How many pages do you want to scrape on this IMDB list? (default: 1): ") or "1"
+        validate_input(imdb_url, page_numbers)
+
+        # Input the collection name
+        global IMDB_COLLECTION_NAME
+        IMDB_COLLECTION_NAME = input("Collection Name (e.g., Disney Classics): ")
+
+        plex = PlexServer(PLEX_URL, PLEX_TOKEN)
+        plex_movies = retrieve_movies_from_plex(plex, MOVIE_LIBRARIES)
+
+        imdb_movies = retrieve_movies_from_imdb(imdb_url, page_numbers)
+        imdb_to_plex_map = match_imdb_to_plex_movies(plex_movies, imdb_movies)
+
+        print("Adding the collection '{0}' to matched movies.".format(IMDB_COLLECTION_NAME))
+        for imdb_id, plex_movie in imdb_to_plex_map.items():
+            add_collection(plex_movie.librarySectionID, plex_movie.ratingKey)
+
+        print("Done!")
+    except Exception as e:
+        print("An error occurred:", str(e))
+        sys.exit(1)
+
+def main():
+    run_imdb_sync()
+
+if __name__ == "__main__":
+    main()
