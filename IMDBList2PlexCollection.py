@@ -23,29 +23,39 @@ from lxml import html
 from plexapi.server import PlexServer
 from tmdbv3api import TMDb
 from tmdbv3api import Movie
-from configparser import ConfigParser
+from configparser
 from bs4 import BeautifulSoup
 import re
 import traceback  # Added for error handling
 
-# Constants and configurations
-CONFIG_PATH = 'config.ini'
+# Start with a nice clean screen
+os.system('cls' if os.name == 'nt' else 'clear')
+
+# Hacky solution for Python 2.x & 3.x compatibility
+if hasattr(__builtins__, 'raw_input'):
+    input = raw_input
+
+### Header ###
+print("===================================================================")
+print(" Automated IMDB List to Collection script by /u/deva5610 - V1.2 ")
+print(" Created by modifying the excellent  ")
+print(" Automated IMDB Top 250 Plex collection script by /u/SwiftPanda16  ")
+print("===================================================================")
+print("\n")
 
 def load_config(config_path):
-    # Create a ConfigParser instance
-    config = ConfigParser()
+    config = configparser.ConfigParser()
+    config.read(config_path)
+    return config
 
-    try:
-        # Load the configuration file
-        config.read(config_path)
+# Load configuration from config.ini
+config_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'config.ini')
+config = load_config(config_path)
 
-        # Get configuration values
-        PLEX_URL = config.get('plex', 'url')
-        PLEX_TOKEN = config.get('plex', 'token')
-        MOVIE_LIBRARIES = config.get('plex', 'library').split(',')
-        TMDB_API_KEY = config.get('tmdb', 'apikey')
-
-        return PLEX_URL, PLEX_TOKEN, MOVIE_LIBRARIES, TMDB_API_KEY
+PLEX_URL = config.get('plex', 'url')
+PLEX_TOKEN = config.get('plex', 'token')
+MOVIE_LIBRARIES = config.get('plex', 'library').split(',')
+TMDB_API_KEY = config.get('tmdb', 'apikey')  # Add this line to load TMDB_API_KEY
 
     except Exception as e:
         print(f"Error loading configuration from {config_path}: {str(e)}")
@@ -117,13 +127,17 @@ def retrieve_movies_from_imdb(imdb_url, page_numbers):
             for movie_element in movie_elements:
                 title_element = movie_element.find("h3", class_="lister-item-header")
                 year_element = movie_element.find("span", class_="lister-item-year")
-                image_element = movie_element.find("div", class_="lister-item-image")
-                
+                imdb_link = movie_element.find("a", href=True)
+
                 # Check if all required elements are found
-                if title_element and year_element and image_element:
+                if title_element and year_element and imdb_link:
                     title = title_element.find("a").text.strip()
-                    year = year_element.text.strip('()')
-                    imdb_id = image_element.find("a")["data-tconst"]
+                    
+                    # Extract the year and handle variations in the format
+                    year_text = year_element.text.strip('()')
+                    year = ''.join(filter(str.isdigit, year_text))  # Extract digits from the year text
+
+                    imdb_id = imdb_link["href"].split("/title/")[1].split("/")[0]
 
                     imdb_movies.append({
                         "title": title,
@@ -131,12 +145,18 @@ def retrieve_movies_from_imdb(imdb_url, page_numbers):
                         "imdb_id": imdb_id
                     })
                 else:
-                    print(f"Failed to extract movie data from page {page}. Missing elements.")
+                    print(f"Failed to extract movie data from page {page}. Missing elements:")
+                    if not title_element:
+                        print("- Title element not found.")
+                    if not year_element:
+                        print("- Year element not found.")
+                    if not imdb_link:
+                        print("- IMDb link element not found.")
         else:
             print(f"Failed to retrieve page {page} from IMDb.")
 
     return imdb_movies
-
+    
 def match_imdb_to_plex_movies(plex_movies, imdb_movies):
     # Match IMDb movies to Plex movies
     imdb_to_plex_map = {}
