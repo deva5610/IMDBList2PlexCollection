@@ -120,7 +120,7 @@ def retrieve_movies_from_imdb(imdb_url, page_numbers):
                 imdb_id = movie_element.find("div", class_="lister-item-image").find("a")["data-tconst"]
 
                 title = title_element.find("a").text.strip() if title_element else "N/A"
-                year = year_element.text.strip("()") if year_element else "N/A"
+                year = year_element.text.strip('()') if year_element else "N/A"
 
                 imdb_movies.append({
                     "title": title,
@@ -129,7 +129,7 @@ def retrieve_movies_from_imdb(imdb_url, page_numbers):
                 })
         else:
             print(f"Failed to retrieve page {page} from IMDb.")
-    
+
     return imdb_movies
 
 def match_imdb_to_plex_movies(plex_movies, imdb_movies):
