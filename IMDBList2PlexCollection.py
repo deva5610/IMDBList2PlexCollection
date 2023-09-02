@@ -55,7 +55,7 @@ config = load_config(config_path)
 PLEX_URL = config.get('plex', 'url')
 PLEX_TOKEN = config.get('plex', 'token')
 MOVIE_LIBRARIES = config.get('plex', 'library').split(',')
-TMDB_API_KEY = config.get('tmdb', 'apikey')  # Add this line to load TMDB_API_KEY
+TMDB_API_KEY = config.get('tmdb', 'apikey')
 
     except Exception as e:
         print(f"Error loading configuration from {config_path}: {str(e)}")
