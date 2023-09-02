@@ -117,16 +117,21 @@ def retrieve_movies_from_imdb(imdb_url, page_numbers):
             for movie_element in movie_elements:
                 title_element = movie_element.find("h3", class_="lister-item-header")
                 year_element = movie_element.find("span", class_="lister-item-year")
-                imdb_id = movie_element.find("div", class_="lister-item-image").find("a")["data-tconst"]
+                image_element = movie_element.find("div", class_="lister-item-image")
+                
+                # Check if all required elements are found
+                if title_element and year_element and image_element:
+                    title = title_element.find("a").text.strip()
+                    year = year_element.text.strip('()')
+                    imdb_id = image_element.find("a")["data-tconst"]
 
-                title = title_element.find("a").text.strip() if title_element else "N/A"
-                year = year_element.text.strip('()') if year_element else "N/A"
-
-                imdb_movies.append({
-                    "title": title,
-                    "year": year,
-                    "imdb_id": imdb_id
-                })
+                    imdb_movies.append({
+                        "title": title,
+                        "year": year,
+                        "imdb_id": imdb_id
+                    })
+                else:
+                    print(f"Failed to extract movie data from page {page}. Missing elements.")
         else:
             print(f"Failed to retrieve page {page} from IMDb.")
 
