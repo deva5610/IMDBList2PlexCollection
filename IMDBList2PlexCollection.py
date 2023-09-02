@@ -57,10 +57,6 @@ PLEX_TOKEN = config.get('plex', 'token')
 MOVIE_LIBRARIES = config.get('plex', 'library').split(',')
 TMDB_API_KEY = config.get('tmdb', 'apikey')
 
-    except Exception as e:
-        print(f"Error loading configuration from {config_path}: {str(e)}")
-        sys.exit(1)
-
 def validate_input(imdb_url, page_numbers):
     # Validate user inputs for IMDb URL and page numbers
     imdb_url_pattern = r'^https:\/\/www\.imdb\.com\/list\/ls\d+\/$'
